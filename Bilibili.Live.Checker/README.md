@@ -1,19 +1,28 @@
+# wxpusher中关注了的用户的id获取
+
+[!wxpusher中关注了的用户的id获取](Bilibili.Live.Checker/wxpusher中关注了的用户的id.jpg)
+
+
 # 配置文件
 appsetting.json
+
+
 ```json
 {
   "wxpusher": {
-    "APPTOKEN": "wxpusher的apptoken",
+    "APPTOKEN": "wxpusher的apptoken", /
     "users": [
       {
         "uid": "wxpusher中关注了的用户的id<https://wxpusher.zjiecode.com/admin/main/wxuser/list>",
         "name": "用户昵称/备注",
         "DNDPeriod": [
-          "00:00:00-08:00:00" //免打扰时段，可以设置多个
+          "00:00:00-11:30:00",
+          "13:00:00-18:00:00" //免打扰时间段
         ],
         "bilibili": {
           "uids": [
-            ""//B站用户UID
+            "3493137045523067",
+            "B站用户UID"
           ]
         }
       }
