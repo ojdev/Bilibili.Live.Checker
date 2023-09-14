@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Bilibili.Live.Checker": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

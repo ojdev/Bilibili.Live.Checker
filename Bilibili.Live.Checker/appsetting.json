@@ -1,0 +1,19 @@
+﻿{
+  "wxpusher": {
+    "APPTOKEN": "",
+    "users": [
+      {
+        "uid": "",
+        "name": "狐狸",
+        "DNDPeriod": [
+          "00:00:00-08:00:00"
+        ],
+        "bilibili": {
+          "uids": [
+            ""
+          ]
+        }
+      }
+    ]
+  }
+}
