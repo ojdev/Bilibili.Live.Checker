@@ -1,6 +1,6 @@
 # wxpusher中关注了的用户的id获取
 
-[!wxpusher中关注了的用户的id获取](Bilibili.Live.Checker/wxpusher中关注了的用户的id.jpg)
+[wxpusher中关注了的用户的id获取](Bilibili.Live.Checker/wxpusher中关注了的用户的id.jpg)
 
 
 # 配置文件
@@ -30,6 +30,18 @@ appsetting.json
   }
 }
 ```
+
+# docker
+
+## windows
+
+E:\biliweixin\appsetting.json
+
+`docker run -v /E/biliweixin/appsetting.json:/app/appsetting.json -e TZ=Asia/Shanghai -d --name bilivechk luacloud/bilibili.live.checker:latest`
+
+## linux 
+
+`docker run -v /docker-config/bilivechk/appsetting.json:/app/appsetting.json -e TZ=Asia/Shanghai -d --name bilivechk luacloud/bilibili.live.checker:latest`
 
 # docker-compose
 
