@@ -1,20 +1,20 @@
 ﻿{
   "interval": 10,
   "wxpusher": {
-    "APPTOKEN": "AT_VOFmJO9V2DQva3w34i23lh6EHyP8wecR",
+    "APPTOKEN": "",
     "users": [
       {
         "uid": "",
-        "topicId": "12454",
-        "name": "芋",
+        "topicId": "",
+        "name": "",
         "DNDPeriod": [
           "00:00:00-00:00:00"
         ],
         "bilibili": {
           "uids": [
-            "50329118",
-            "2412557",
-            "110631"
+            "",
+            "",
+            ""
           ]
         }
       }
