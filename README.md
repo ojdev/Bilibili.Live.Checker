@@ -1,6 +1,6 @@
 # wxpusher中关注了的用户的id获取
 
-[wxpusher中关注了的用户的id获取](Bilibili.Live.Checker/wxpusher中关注了的用户的id.jpg)
+[wxpusher中关注了的用户的id获取](https://raw.githubusercontent.com/ojdev/Bilibili.Live.Checker/master/Bilibili.Live.Checker/wxpusher%E4%B8%AD%E5%85%B3%E6%B3%A8%E4%BA%86%E7%9A%84%E7%94%A8%E6%88%B7%E7%9A%84id.jpg)
 
 
 # 配置文件
