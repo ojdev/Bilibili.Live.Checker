@@ -63,7 +63,7 @@ while (await timer.WaitForNextTickAsync())
             var bilibiliScapeInfo = JsonSerializer.Deserialize<BilibiliResponse<BilibiliSpaceInfo>>(json);
             if (bilibiliScapeInfo.Code != 0)
             {
-                Console.WriteLine("进入熔断");
+                Console.WriteLine($"{uid}\t进入熔断");
                 await Task.Delay(TimeSpan.FromMinutes(flse++));
                 Console.WriteLine(json);
                 Console.WriteLine($"{flse}分钟后重试");
