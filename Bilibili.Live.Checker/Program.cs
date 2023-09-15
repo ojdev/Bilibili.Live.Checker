@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 ConfigurationBuilder builder = new();
 builder.AddJsonFile("appsetting.json", true, true);
 var ConfigRoot = builder.Build();//根节点
+var interval = ConfigRoot.GetSection("interval").Get<int>();
 var configuration = ConfigRoot.GetSection("wxpusher").Get<WXPusher>();
 
 Console.WriteLine("Hello, World!");
@@ -30,7 +31,7 @@ client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("app
 client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.76");
 var wechatPush = new PushWeChatMessage(configuration?.APPTOKEN ?? "");
 Console.WriteLine("后台轮询定时器准备");
-using var timer = new PeriodicTimer(TimeSpan.FromSeconds(10));
+using var timer = new PeriodicTimer(TimeSpan.FromSeconds(interval));
 
 Console.WriteLine("开始检测");
 while (await timer.WaitForNextTickAsync())
@@ -53,10 +54,11 @@ while (await timer.WaitForNextTickAsync())
                 {
                     //通知
                     var uids = new string[] { user.UID };
+                    var topicIds = new string[] { user.TopicId };
                     var summary = "";
                     var content = bilibiliScapeInfo?.Data?.MessageBody();
                     string url = bilibiliScapeInfo?.Data?.LiveRoom?.Url ?? "";
-                    await wechatPush.SendAsync(uids, summary, content, url);
+                    await wechatPush.SendAsync(uids, topicIds, summary, content, url);
                     item.IsNotify = false;
                 }
             }

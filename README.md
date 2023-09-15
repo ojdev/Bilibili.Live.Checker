@@ -9,12 +9,14 @@ appsetting.json
 
 ```json
 {
+  "interval": 10, //轮询间隔（秒）
   "wxpusher": {
     "APPTOKEN": "wxpusher的apptoken", /
     "users": [
       {
         "uid": "wxpusher中关注了的用户的id<https://wxpusher.zjiecode.com/admin/main/wxuser/list>",
         "name": "用户昵称/备注",
+        "topicId": "",
         "DNDPeriod": [
           "00:00:00-11:30:00",
           "13:00:00-18:00:00" //免打扰时间段

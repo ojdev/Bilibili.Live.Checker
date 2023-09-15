@@ -6,6 +6,10 @@ public class WXPusherUser
     /// </summary>
     public string UID { get; set; }
     /// <summary>
+    /// 
+    /// </summary>
+    public string TopicId { get; set; }
+    /// <summary>
     /// 备注名
     /// </summary>
     public string Name { get; set; }
@@ -27,7 +31,7 @@ public class WXPusherUser
         foreach (var item in DNDPeriod)
         {
             var time = item.Split('-');
-            if (DateTimeOffset.Parse(time[0]) > dateTime && dateTime < DateTimeOffset.Parse(time[1]))
+            if (DateTimeOffset.Parse(DateTimeOffset.Now.ToString("yyyy-MM-dd") + " " + time[0]) > dateTime && dateTime < DateTimeOffset.Parse(DateTimeOffset.Now.ToString("yyyy-MM-dd") + " " + time[1]))
             {
                 return true;
             }

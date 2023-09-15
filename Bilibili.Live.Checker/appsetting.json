@@ -1,9 +1,11 @@
 ﻿{
+  "interval": 10,
   "wxpusher": {
     "APPTOKEN": "",
     "users": [
       {
         "uid": "",
+        "topicId": "",
         "name": "狐狸",
         "DNDPeriod": [
           "00:00:00-08:00:00"
