@@ -43,7 +43,8 @@ client.DefaultRequestHeaders.Add("Sec-Fetch-Site", "same-site");
 var wechatPush = new PushWeChatMessage(configuration?.APPTOKEN ?? "");
 Console.WriteLine("后台轮询定时器准备");
 using var timer = new PeriodicTimer(TimeSpan.FromSeconds(interval));
-
+int flse = 1;
+bool isFlse = false;
 Console.WriteLine("开始检测");
 while (await timer.WaitForNextTickAsync())
 {
@@ -60,7 +61,25 @@ while (await timer.WaitForNextTickAsync())
             client.DefaultRequestHeaders.Add("Referer", $"https://space.bilibili.com/{item.UID}/");
             var json = await client.GetStringAsync($"https://api.bilibili.com/x/space/wbi/acc/info?mid={item.UID}&token=&platform=web");
             var bilibiliScapeInfo = JsonSerializer.Deserialize<BilibiliResponse<BilibiliSpaceInfo>>(json);
-            if (bilibiliScapeInfo.Code != 0) Console.WriteLine(json);
+            if (bilibiliScapeInfo.Code != 0)
+            {
+                Console.WriteLine("进入熔断");
+                await Task.Delay(TimeSpan.FromMinutes(flse++));
+                Console.WriteLine(json);
+                Console.WriteLine($"{flse}分钟后重试");
+                if (!isFlse)
+                    isFlse = true;
+                continue;
+            }
+            else
+            {
+                if (isFlse)
+                {
+                    Console.WriteLine("解除熔断");
+                    flse = 1;
+                    isFlse = false;
+                }
+            }
             item.Status = (bilibiliScapeInfo?.Data?.LiveRoom?.LiveStatus ?? 0) == 1;
             if (item.IsNotify)
             {
