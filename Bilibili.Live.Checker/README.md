@@ -31,6 +31,14 @@ appsetting.json
 }
 ```
 
+# docker
+
+## windows
+`docker run -v /E/biliweixin/Bilibili.Live.Checker-master/Bilibili.Live.Checker/appsetting.json:/app/appsetting.json -e TZ=Asia/Shanghai -d --name bilivechk luacloud/bilibili.live.checker:latest`
+
+## linux 
+`docker run -v /docker-config/bilivechk/appsetting.json:/app/appsetting.json -e TZ=Asia/Shanghai -d --name bilivechk luacloud/bilibili.live.checker:latest`
+
 # docker-compose
 
 ```yaml
