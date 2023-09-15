@@ -1,9 +1,8 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using System.Text.Json.Serialization;
 /// <summary>
 /// 空间信息
 /// </summary>
-class BilibiliSpaceInfo
+public class BilibiliSpaceInfo
 {
     /// <summary>
     /// 用户名
@@ -34,7 +33,7 @@ class BilibiliSpaceInfo
     /// 直播间
     /// </summary>
     [JsonPropertyName("live_room")]
-    public BilibiliLiveRoom? LiveRoom { get; set; }
+    public BilibiliSpaceLiveRoom? LiveRoom { get; set; }
     public string MessageBody()
     {
         return 

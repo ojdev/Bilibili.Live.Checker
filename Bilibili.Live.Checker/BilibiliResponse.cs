@@ -1,10 +1,9 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using System.Text.Json.Serialization;
 /// <summary>
 /// 请求信息
 /// </summary>
 /// <typeparam name="T"></typeparam>
-class BilibiliResponse<T>
+public class BilibiliResponse<T>
 {
     [JsonPropertyName("code")]
     public int Code { get; set; }

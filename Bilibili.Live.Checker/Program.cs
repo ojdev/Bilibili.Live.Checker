@@ -1,9 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-using Microsoft.Extensions.Configuration;
-using System.Runtime.Caching;
-using System.Text.Json;
-
-ConfigurationBuilder builder = new();
+﻿ConfigurationBuilder builder = new();
 builder.AddJsonFile("appsetting.json", true, true);
 var ConfigRoot = builder.Build();//根节点
 var interval = ConfigRoot.GetSection("interval").Get<int>();
@@ -22,16 +17,17 @@ foreach (var user in configuration.Users)
     {
         cache.Add(uid, new FollowInfo(uid), cacheItemPolicy);
     }
+    foreach (var uid in user.Bilibili.RoomIds)
+    {
+        cache.Add($"{uid}", new FollowInfo($"{uid}"), cacheItemPolicy);
+    }
 }
 
 using HttpClient client = new();
 client.DefaultRequestHeaders.Accept.Clear();
 client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.76");
-//client.DefaultRequestHeaders.Add(":authority:", "api.bilibili.com");
-//client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
 client.DefaultRequestHeaders.Add("Accept-Language", "zh-CN,zh;q=0.9");
 client.DefaultRequestHeaders.Add("Cache-Control", "no-cache");
-client.DefaultRequestHeaders.Add("Origin", "https://space.bilibili.com");
 client.DefaultRequestHeaders.Add("Dnt", "1");
 client.DefaultRequestHeaders.Add("Pragma", "no-cache");
 client.DefaultRequestHeaders.Add("Sec-Ch-Ua", "\"Chromium\";v=\"116\", \"Not)A;Brand\";v=\"24\", \"Microsoft Edge\";v=\"116\"");
@@ -52,20 +48,21 @@ while (await timer.WaitForNextTickAsync())
     {
         if (user.IsDNDPeriod(DateTimeOffset.Now))
             continue;
-        foreach (var uid in user.Bilibili.UIDs)
+        //按空间
+        foreach (var uid in user.Bilibili.UIDs.Where(t => !string.IsNullOrWhiteSpace(t)))
         {
             var item = (FollowInfo?)cache.Get(uid);
             if (item == null) continue;
             cache.Remove(uid);
+            client.DefaultRequestHeaders.Remove("Origin");
+            client.DefaultRequestHeaders.Add("Origin", "https://space.bilibili.com");
             client.DefaultRequestHeaders.Remove("Referer");
             client.DefaultRequestHeaders.Add("Referer", $"https://space.bilibili.com/{item.UID}/");
-            var json = await client.GetStringAsync($"https://api.bilibili.com/x/space/wbi/acc/info?mid={item.UID}&token=&platform=web");
-            var bilibiliScapeInfo = JsonSerializer.Deserialize<BilibiliResponse<BilibiliSpaceInfo>>(json);
+            var bilibiliScapeInfo = await client.GetSpaceLiveRoom(item.UID);
             if (bilibiliScapeInfo.Code != 0)
             {
-                Console.WriteLine($"{uid}\t进入熔断");
+                Console.WriteLine($"{uid}\t{bilibiliScapeInfo.Code}\t{bilibiliScapeInfo.Message}\t进入熔断");
                 await Task.Delay(TimeSpan.FromMinutes(flse++));
-                Console.WriteLine(json);
                 Console.WriteLine($"{flse}分钟后重试");
                 if (!isFlse)
                     isFlse = true;
@@ -102,6 +99,47 @@ while (await timer.WaitForNextTickAsync())
             }
             cache.Add(uid, item, cacheItemPolicy);
 
+        }
+        //按直播间
+        foreach (var uid in user.Bilibili.RoomIds)
+        {
+            client.DefaultRequestHeaders.Remove("Origin");
+            client.DefaultRequestHeaders.Add("Origin", "https://live.bilibili.com");
+            client.DefaultRequestHeaders.Remove("Referer");
+            client.DefaultRequestHeaders.Add("Referer", $"https://live.bilibili.com/{uid}/");
+            var item = (FollowInfo?)cache.Get($"{uid}");
+            if (item == null) continue;
+            cache.Remove($"{uid}");
+            var liveroom = await client.GetLiveRoom(uid);
+            item.Status = (liveroom?.Data?.LiveStatus ?? 0) == 1;
+            if (item.IsNotify)
+            {
+                if (item.Status)
+                {
+                    var uids = new string[] { user.UID };
+                    var topicIds = new string[] { user.TopicId };
+                    var summary = "";
+                    //通知
+                    var spaceLiveRoom = await client.GetSpaceLiveRoom($"{liveroom.Data.UID}");
+                    if (spaceLiveRoom.Code == 0)
+                    {
+                        var content = spaceLiveRoom?.Data?.MessageBody();
+                        string url = spaceLiveRoom?.Data?.LiveRoom?.Url ?? "";
+                        await wechatPush.SendAsync(uids, topicIds, summary, content, url);
+                    }
+                    else
+                    {
+                        await wechatPush.SendAsync(uids, topicIds, summary, $"{uid}直播间开始直播了", $"https://live.bilibili.com/{uid}");
+                    }
+                    item.IsNotify = false;
+                }
+            }
+            else
+            {
+                if (!item.Status)
+                    item.IsNotify = true;
+            }
+            cache.Add($"{uid}", item, cacheItemPolicy);
         }
     }
 }

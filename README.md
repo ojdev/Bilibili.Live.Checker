@@ -20,7 +20,7 @@ appsetting.json
       {
         "uid": "wxpusher中关注了的用户的id<https://wxpusher.zjiecode.com/admin/main/wxuser/list>",
         "name": "用户昵称/备注",
-        "topicId": "",
+        "topicId": "主题Id<https://wxpusher.zjiecode.com/admin/main/topics/list>",
         "DNDPeriod": [
           "00:00:00-11:30:00",
           "13:00:00-18:00:00" //免打扰时间段
@@ -29,6 +29,10 @@ appsetting.json
           "uids": [
             "3493137045523067",
             "B站用户UID"
+          ],
+          "roomids": [
+            1000,
+            1000000,//直播间Id，没有双引号
           ]
         }
       }

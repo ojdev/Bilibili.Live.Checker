@@ -2,12 +2,9 @@
 /// <summary>
 /// 
 /// </summary>
-public class WXPusher
+/// <param name="APPTOKEN">  </param>
+public record WXPusher(string? APPTOKEN)
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public string? APPTOKEN { get; set; }
     public List<WXPusherUser> Users { set; get; } = new();
 
 }
