@@ -1,28 +1,28 @@
-# wxpusherÖĞ¹Ø×¢ÁËµÄÓÃ»§µÄid»ñÈ¡
+ï»¿# wxpusherä¸­å…³æ³¨äº†çš„ç”¨æˆ·çš„idè·å–
 
-[!wxpusherÖĞ¹Ø×¢ÁËµÄÓÃ»§µÄid»ñÈ¡](Bilibili.Live.Checker/wxpusherÖĞ¹Ø×¢ÁËµÄÓÃ»§µÄid.jpg)
+[wxpusherä¸­å…³æ³¨äº†çš„ç”¨æˆ·çš„idè·å–](Bilibili.Live.Checker/wxpusherä¸­å…³æ³¨äº†çš„ç”¨æˆ·çš„id.jpg)
 
 
-# ÅäÖÃÎÄ¼ş
+# é…ç½®æ–‡ä»¶
 appsetting.json
 
 
 ```json
 {
   "wxpusher": {
-    "APPTOKEN": "wxpusherµÄapptoken", /
+    "APPTOKEN": "wxpusherçš„apptoken", /
     "users": [
       {
-        "uid": "wxpusherÖĞ¹Ø×¢ÁËµÄÓÃ»§µÄid<https://wxpusher.zjiecode.com/admin/main/wxuser/list>",
-        "name": "ÓÃ»§êÇ³Æ/±¸×¢",
+        "uid": "wxpusherä¸­å…³æ³¨äº†çš„ç”¨æˆ·çš„id<https://wxpusher.zjiecode.com/admin/main/wxuser/list>",
+        "name": "ç”¨æˆ·æ˜µç§°/å¤‡æ³¨",
         "DNDPeriod": [
           "00:00:00-11:30:00",
-          "13:00:00-18:00:00" //Ãâ´òÈÅÊ±¼ä¶Î
+          "13:00:00-18:00:00" //å…æ‰“æ‰°æ—¶é—´æ®µ
         ],
         "bilibili": {
           "uids": [
             "3493137045523067",
-            "BÕ¾ÓÃ»§UID"
+            "Bç«™ç”¨æˆ·UID"
           ]
         }
       }
@@ -34,9 +34,13 @@ appsetting.json
 # docker
 
 ## windows
-`docker run -v /E/biliweixin/Bilibili.Live.Checker-master/Bilibili.Live.Checker/appsetting.json:/app/appsetting.json -e TZ=Asia/Shanghai -d --name bilivechk luacloud/bilibili.live.checker:latest`
+
+E:\biliweixin\appsetting.json
+
+`docker run -v /E/biliweixin/appsetting.json:/app/appsetting.json -e TZ=Asia/Shanghai -d --name bilivechk luacloud/bilibili.live.checker:latest`
 
 ## linux 
+
 `docker run -v /docker-config/bilivechk/appsetting.json:/app/appsetting.json -e TZ=Asia/Shanghai -d --name bilivechk luacloud/bilibili.live.checker:latest`
 
 # docker-compose
