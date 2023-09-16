@@ -1,18 +1,29 @@
-﻿ConfigurationBuilder builder = new();
+﻿using ILoggerFactory loggerFactory =
+   LoggerFactory.Create(builder =>
+       builder.AddSimpleConsole(options =>
+       {
+           options.IncludeScopes = true;
+           options.SingleLine = true;
+           options.TimestampFormat = "HH:mm:ss ";
+       }));
+ILogger<Program> logger = loggerFactory.CreateLogger<Program>();
+using (logger.BeginScope("[scope is enabled]")) ;
+
+ConfigurationBuilder builder = new();
 builder.AddJsonFile("appsetting.json", true, true);
 var ConfigRoot = builder.Build();//根节点
 var interval = ConfigRoot.GetSection("interval").Get<int>();
 var configuration = ConfigRoot.GetSection("wxpusher").Get<WXPusher>();
 
-Console.WriteLine("Hello, World!");
+logger.LogInformation("Hello, World!");
 
 ObjectCache cache = MemoryCache.Default;
 var cacheItemPolicy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.MaxValue };
 
-Console.WriteLine("关注列表初始化");
+logger.LogInformation("关注列表初始化");
 foreach (var user in configuration.Users)
 {
-    Console.WriteLine($"{user.Name}关注了{user.Bilibili.UIDs.Count}个主播");
+    logger.LogInformation($"{user.Name}关注了{user.Bilibili.UIDs.Count}个主播;关注了{user.Bilibili.RoomIds.Count}个直播间");
     foreach (var uid in user.Bilibili.UIDs)
     {
         cache.Add(uid, new FollowInfo(uid), cacheItemPolicy);
@@ -37,11 +48,11 @@ client.DefaultRequestHeaders.Add("Sec-Fetch-Dest", "empty");
 client.DefaultRequestHeaders.Add("Sec-Fetch-Mode", "cors");
 client.DefaultRequestHeaders.Add("Sec-Fetch-Site", "same-site");
 var wechatPush = new PushWeChatMessage(configuration?.APPTOKEN ?? "");
-Console.WriteLine("后台轮询定时器准备");
+logger.LogInformation("后台轮询定时器准备");
 using var timer = new PeriodicTimer(TimeSpan.FromSeconds(interval));
 int flse = 1;
 bool isFlse = false;
-Console.WriteLine("开始检测");
+logger.LogInformation("开始检测");
 while (await timer.WaitForNextTickAsync())
 {
     foreach (var user in configuration.Users)
@@ -61,9 +72,9 @@ while (await timer.WaitForNextTickAsync())
             var bilibiliScapeInfo = await client.GetSpaceLiveRoom(item.UID);
             if (bilibiliScapeInfo.Code != 0)
             {
-                Console.WriteLine($"{uid}\t{bilibiliScapeInfo.Code}\t{bilibiliScapeInfo.Message}\t进入熔断");
+                logger.LogWarning($"{uid}\t{bilibiliScapeInfo.Code}\t{bilibiliScapeInfo.Message}\t进入熔断");
                 await Task.Delay(TimeSpan.FromMinutes(flse++));
-                Console.WriteLine($"{flse}分钟后重试");
+                logger.LogWarning($"{flse}分钟后重试");
                 if (!isFlse)
                     isFlse = true;
                 continue;
@@ -72,7 +83,7 @@ while (await timer.WaitForNextTickAsync())
             {
                 if (isFlse)
                 {
-                    Console.WriteLine("解除熔断");
+                    logger.LogWarning("解除熔断");
                     flse = 1;
                     isFlse = false;
                 }
@@ -88,7 +99,7 @@ while (await timer.WaitForNextTickAsync())
                     var summary = "";
                     var content = bilibiliScapeInfo?.Data?.MessageBody();
                     string url = bilibiliScapeInfo?.Data?.LiveRoom?.Url ?? "";
-                    await wechatPush.SendAsync(uids, topicIds, summary, content, url);
+                    await wechatPush.SendAsync(uids, topicIds, summary, content, url, logger);
                     item.IsNotify = false;
                 }
             }
@@ -125,11 +136,11 @@ while (await timer.WaitForNextTickAsync())
                     {
                         var content = spaceLiveRoom?.Data?.MessageBody();
                         string url = spaceLiveRoom?.Data?.LiveRoom?.Url ?? "";
-                        await wechatPush.SendAsync(uids, topicIds, summary, content, url);
+                        await wechatPush.SendAsync(uids, topicIds, summary, content, url, logger);
                     }
                     else
                     {
-                        await wechatPush.SendAsync(uids, topicIds, summary, $"{uid}直播间开始直播了", $"https://live.bilibili.com/{uid}");
+                        await wechatPush.SendAsync(uids, topicIds, summary, $"{uid}直播间开始直播了", $"https://live.bilibili.com/{uid}", logger);
                     }
                     item.IsNotify = false;
                 }

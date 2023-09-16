@@ -20,10 +20,10 @@ public class PushWeChatMessage
     /// <param name="content"></param>
     /// <param name="url"></param>
     /// <returns></returns>
-    public async Task SendAsync(string[] uids, string[] topicIds, string summary, string content, string url = "")
+    public async Task SendAsync(string[] uids, string[] topicIds, string summary, string content, string url = "", ILogger _logger = null)
     {
         using HttpClient send = new();
-        Console.WriteLine($"推送信息给UID{string.Join('、', uids)}，TopicId{string.Join(',', topicIds)}");
+        _logger?.LogInformation($"推送信息给UID{string.Join('、', uids)}，TopicId{string.Join(',', topicIds)}");
         var sendRequest = new HttpRequestMessage
         {
             Method = HttpMethod.Post,
@@ -42,6 +42,6 @@ public class PushWeChatMessage
         };
         var sendResp = await send.SendAsync(sendRequest);
         var respJson = await sendResp.Content.ReadAsStringAsync();
-        Console.WriteLine(respJson);
+        _logger?.LogInformation(respJson);
     }
 }
