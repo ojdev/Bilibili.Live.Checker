@@ -2,6 +2,7 @@
 /// <summary>
 /// 空间信息
 /// </summary>
+[Obsolete("已过期", error: true)]
 public class BilibiliSpaceInfo
 {
     /// <summary>
