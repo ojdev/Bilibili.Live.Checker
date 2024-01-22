@@ -2,6 +2,7 @@
 /// <summary>
 /// 空间信息
 /// </summary>
+[Obsolete("已过期", error: true)]
 public class BilibiliSpaceInfo
 {
     /// <summary>
@@ -36,7 +37,7 @@ public class BilibiliSpaceInfo
     public BilibiliSpaceLiveRoom? LiveRoom { get; set; }
     public string MessageBody()
     {
-        return 
+        return
 @$"## Lv{Level} {Name}的直播间开播了！
 ## {LiveRoom?.Title}
 [![直播间封面]({LiveRoom?.Cover})]({LiveRoom?.Url})"

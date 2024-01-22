@@ -1,4 +1,5 @@
-﻿public static class BilibiliExtend
+﻿
+public static class BilibiliExtend
 {
     /// <summary>
     /// 空间页中的直播信息
@@ -6,10 +7,14 @@
     /// <param name="client"></param>
     /// <param name="UID"></param>
     /// <returns></returns>
-    public static async Task<BilibiliResponse<BilibiliSpaceInfo>> GetSpaceLiveRoom(this HttpClient client, string UID)
+    public static async Task<string> GetSpaceLiveRoom(this HttpClient client, string UID)
     {
-        var json = await client.GetStringAsync($"https://api.bilibili.com/x/space/wbi/acc/info?mid={UID}&token=&platform=web");
-        return JsonSerializer.Deserialize<BilibiliResponse<BilibiliSpaceInfo>>(json);
+
+        var web = new HtmlWeb();
+        var doc = web.Load("https://space.bilibili.com/{UID}/");
+        ////*[@id="h-name"]
+        var title = doc.DocumentNode.InnerText;
+        return title?.Substring(0, title.IndexOf("的个人空间")) ?? string.Empty;
     }
     /// <summary>
     /// 直播信息

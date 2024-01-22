@@ -4,7 +4,7 @@
        {
            options.IncludeScopes = true;
            options.SingleLine = true;
-           options.TimestampFormat = "HH:mm:ss ";
+           options.TimestampFormat = "yyyy-MM-dd HH:mm:ss ";
        }));
 ILogger<Program> logger = loggerFactory.CreateLogger<Program>();
 using (logger.BeginScope("[scope is enabled]")) ;
@@ -16,6 +16,7 @@ var interval = ConfigRoot.GetSection("interval").Get<int>();
 var configuration = ConfigRoot.GetSection("wxpusher").Get<WXPusher>();
 
 logger.LogInformation("Hello, World!");
+
 
 ObjectCache cache = MemoryCache.Default;
 var cacheItemPolicy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.MaxValue };
@@ -70,9 +71,9 @@ while (await timer.WaitForNextTickAsync())
             client.DefaultRequestHeaders.Remove("Referer");
             client.DefaultRequestHeaders.Add("Referer", $"https://space.bilibili.com/{item.UID}/");
             var bilibiliScapeInfo = await client.GetSpaceLiveRoom(item.UID);
-            if (bilibiliScapeInfo.Code != 0)
+            if (string.IsNullOrWhiteSpace(bilibiliScapeInfo))
             {
-                logger.LogWarning($"{uid}\t{bilibiliScapeInfo.Code}\t{bilibiliScapeInfo.Message}\t进入熔断");
+                logger.LogWarning($"{uid}\t进入熔断");
                 await Task.Delay(TimeSpan.FromMinutes(flse++));
                 logger.LogWarning($"{flse}分钟后重试");
                 if (!isFlse)
@@ -88,17 +89,17 @@ while (await timer.WaitForNextTickAsync())
                     isFlse = false;
                 }
             }
-            item.Status = (bilibiliScapeInfo?.Data?.LiveRoom?.LiveStatus ?? 0) == 1;
             if (item.IsNotify)
             {
-                if (item.Status)
+                if (!string.IsNullOrWhiteSpace(bilibiliScapeInfo))
                 {
                     //通知
                     var uids = new string[] { user.UID };
                     var topicIds = new string[] { user.TopicId };
                     var summary = "";
-                    var content = bilibiliScapeInfo?.Data?.MessageBody();
-                    string url = bilibiliScapeInfo?.Data?.LiveRoom?.Url ?? "";
+
+                    var content = $"{bilibiliScapeInfo}直播间开始直播了";
+                    string url = $"https://live.bilibili.com/{uid}" ?? "";
                     await wechatPush.SendAsync(uids, topicIds, summary, content, url, logger);
                     item.IsNotify = false;
                 }
@@ -132,10 +133,10 @@ while (await timer.WaitForNextTickAsync())
                     var summary = "";
                     //通知
                     var spaceLiveRoom = await client.GetSpaceLiveRoom($"{liveroom.Data.UID}");
-                    if (spaceLiveRoom.Code == 0)
+                    if (!string.IsNullOrWhiteSpace(spaceLiveRoom))
                     {
-                        var content = spaceLiveRoom?.Data?.MessageBody();
-                        string url = spaceLiveRoom?.Data?.LiveRoom?.Url ?? "";
+                        var content = $"{spaceLiveRoom}直播间开始直播了";
+                        string url = $"https://live.bilibili.com/{uid}" ?? "";
                         await wechatPush.SendAsync(uids, topicIds, summary, content, url, logger);
                     }
                     else
