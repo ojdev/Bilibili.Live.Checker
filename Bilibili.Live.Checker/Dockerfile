@@ -1,5 +1,5 @@
 #See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-FROM mcr.microsoft.com/dotnet/runtime:6.0 AS base
+FROM mcr.microsoft.com/dotnet/runtime:8.0 AS base
 WORKDIR /app
 
 ENV wxpusher_APPTOKEN=
@@ -13,9 +13,11 @@ RUN wget https://chromedriver.storage.googleapis.com/120.0/chromedriver_linux64.
 RUN unzip chromedriver_linux64.zip -d /usr/local/bin
 RUN rm chromedriver_linux64.zip
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY ["Bilibili.Live.Checker/Bilibili.Live.Checker.csproj", "Bilibili.Live.Checker/"]
+RUN dotnet --info
+RUN dotnet nuget locals all --clear
 RUN dotnet restore "Bilibili.Live.Checker/Bilibili.Live.Checker.csproj"
 COPY . .
 WORKDIR "/src/Bilibili.Live.Checker"
