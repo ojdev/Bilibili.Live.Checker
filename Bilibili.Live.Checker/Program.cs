@@ -1,4 +1,4 @@
-﻿using ILoggerFactory loggerFactory =
+using ILoggerFactory loggerFactory =
    LoggerFactory.Create(builder =>
        builder.AddSimpleConsole(options =>
        {

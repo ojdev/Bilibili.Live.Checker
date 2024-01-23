@@ -1,4 +1,5 @@
-﻿public static class BilibiliExtend
+
+public static class BilibiliExtend
 {
     /// <summary>
     /// 空间页中的直播信息
