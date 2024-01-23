@@ -1,9 +1,17 @@
 #See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
 FROM mcr.microsoft.com/dotnet/runtime:6.0 AS base
 WORKDIR /app
 
 ENV wxpusher_APPTOKEN=
+
+# °²×° Chrome ä¯ÀÀÆ÷ºÍ ChromeDriver
+RUN apt-get update && apt-get install -y wget unzip libgdiplus libfontconfig
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+RUN echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
+RUN apt-get update && apt-get install -y google-chrome-stable
+RUN wget https://chromedriver.storage.googleapis.com/120.0/chromedriver_linux64.zip
+RUN unzip chromedriver_linux64.zip -d /usr/local/bin
+RUN rm chromedriver_linux64.zip
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src

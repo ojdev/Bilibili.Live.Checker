@@ -1,15 +1,4 @@
-﻿using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Support.UI;
-using OpenQA.Selenium;
-using System;
-using System.Net;
-using System.Security.Policy;
-using System.Text;
-using SeleniumExtras.WaitHelpers;
-using System.Reflection.Metadata;
-;
-
-using ILoggerFactory loggerFactory =
+﻿using ILoggerFactory loggerFactory =
    LoggerFactory.Create(builder =>
        builder.AddSimpleConsole(options =>
        {
@@ -59,8 +48,6 @@ client.DefaultRequestHeaders.Add("Sec-Ch-Ua-Platform", "\"Windows\"");
 client.DefaultRequestHeaders.Add("Sec-Fetch-Dest", "empty");
 client.DefaultRequestHeaders.Add("Sec-Fetch-Mode", "cors");
 client.DefaultRequestHeaders.Add("Sec-Fetch-Site", "same-site");
-
-var node = client.GetBilibiliLiveInfo("3546579726239816");
 
 var wechatPush = new PushWeChatMessage(configuration?.APPTOKEN ?? "");
 logger.LogInformation("后台轮询定时器准备");

@@ -1,8 +1,4 @@
-﻿
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Support.UI;
-using OpenQA.Selenium;
-using SeleniumExtras.WaitHelpers;
+﻿using Microsoft.Extensions.Options;
 
 public static class SeleniumExtend
 {
@@ -16,6 +12,8 @@ public static class SeleniumExtend
     {
         var url = $"https://space.bilibili.com/{UID}/";
         var chromeOptions = new ChromeOptions();
+        chromeOptions.AddArgument("--headless");
+        chromeOptions.AddArgument("--no-sandbox");
         using var driver = new ChromeDriver(chromeOptions);
         driver.Navigate().GoToUrl(url);
         WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
