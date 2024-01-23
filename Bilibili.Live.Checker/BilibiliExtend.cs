@@ -11,7 +11,7 @@ public static class BilibiliExtend
     {
 
         var web = new HtmlWeb();
-        var doc = web.Load("https://space.bilibili.com/{UID}/");
+        var doc = web.Load($"https://space.bilibili.com/{UID}/");
         ////*[@id="h-name"]
         var title = doc.DocumentNode.InnerText;
         return title?.Substring(0, title.IndexOf("的个人空间")) ?? string.Empty;
