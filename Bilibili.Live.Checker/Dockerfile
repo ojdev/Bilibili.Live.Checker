@@ -4,11 +4,9 @@ WORKDIR /app
 
 ENV wxpusher_APPTOKEN=
 
-RUN apt-get update && apt-get install -y wget unzip libgdiplus libfontconfig
+RUN apt-get update && apt-get install -y wget unzip libgdiplus libfontconfig gnupg gnupg2 gnupg1
 
-RUN curl -sSL https://dl-ssl.google.com/linux/linux_signing_key.pub -o /tmp/linux_signing_key.pub \
-    && apt-key add /tmp/linux_signing_key.pub \
-    && rm /tmp/linux_signing_key.pub
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
 
 RUN echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
 RUN apt-get update && apt-get install -y google-chrome-stable
