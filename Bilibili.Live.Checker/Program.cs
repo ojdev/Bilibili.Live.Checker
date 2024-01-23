@@ -1,4 +1,15 @@
-﻿using ILoggerFactory loggerFactory =
+﻿using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
+using OpenQA.Selenium;
+using System;
+using System.Net;
+using System.Security.Policy;
+using System.Text;
+using SeleniumExtras.WaitHelpers;
+using System.Reflection.Metadata;
+;
+
+using ILoggerFactory loggerFactory =
    LoggerFactory.Create(builder =>
        builder.AddSimpleConsole(options =>
        {
@@ -48,6 +59,9 @@ client.DefaultRequestHeaders.Add("Sec-Ch-Ua-Platform", "\"Windows\"");
 client.DefaultRequestHeaders.Add("Sec-Fetch-Dest", "empty");
 client.DefaultRequestHeaders.Add("Sec-Fetch-Mode", "cors");
 client.DefaultRequestHeaders.Add("Sec-Fetch-Site", "same-site");
+
+var node = client.GetBilibiliLiveInfo("3546579726239816");
+
 var wechatPush = new PushWeChatMessage(configuration?.APPTOKEN ?? "");
 logger.LogInformation("后台轮询定时器准备");
 using var timer = new PeriodicTimer(TimeSpan.FromSeconds(interval));
@@ -70,8 +84,8 @@ while (await timer.WaitForNextTickAsync())
             client.DefaultRequestHeaders.Add("Origin", "https://space.bilibili.com");
             client.DefaultRequestHeaders.Remove("Referer");
             client.DefaultRequestHeaders.Add("Referer", $"https://space.bilibili.com/{item.UID}/");
-            var bilibiliScapeInfo = await client.GetSpaceLiveRoom(item.UID);
-            if (string.IsNullOrWhiteSpace(bilibiliScapeInfo))
+            var iLiveInfo = client.GetBilibiliLiveInfo(item.UID);
+            if (string.IsNullOrWhiteSpace(iLiveInfo.uname))
             {
                 logger.LogWarning($"{uid}\t进入熔断");
                 await Task.Delay(TimeSpan.FromMinutes(flse++));
@@ -91,16 +105,16 @@ while (await timer.WaitForNextTickAsync())
             }
             if (item.IsNotify)
             {
-                if (!string.IsNullOrWhiteSpace(bilibiliScapeInfo))
+                if (!string.IsNullOrWhiteSpace(iLiveInfo.messageBody))
                 {
                     //通知
                     var uids = new string[] { user.UID };
                     var topicIds = new string[] { user.TopicId };
                     var summary = "";
 
-                    var content = $"{bilibiliScapeInfo}直播间开始直播了";
+                    var content = $"{iLiveInfo}直播间开始直播了";
                     string url = $"https://live.bilibili.com/{uid}" ?? "";
-                    await wechatPush.SendAsync(uids, topicIds, summary, content, url, logger);
+                    await wechatPush.SendAsync(uids, topicIds, summary, iLiveInfo.messageBody, iLiveInfo.liveUrl, logger);
                     item.IsNotify = false;
                 }
             }
@@ -132,12 +146,10 @@ while (await timer.WaitForNextTickAsync())
                     var topicIds = new string[] { user.TopicId };
                     var summary = "";
                     //通知
-                    var spaceLiveRoom = await client.GetSpaceLiveRoom($"{liveroom.Data.UID}");
-                    if (!string.IsNullOrWhiteSpace(spaceLiveRoom))
+                    var iLiveInfo = client.GetBilibiliLiveInfo($"{uid}");
+                    if (!string.IsNullOrWhiteSpace(iLiveInfo.messageBody))
                     {
-                        var content = $"{spaceLiveRoom}直播间开始直播了";
-                        string url = $"https://live.bilibili.com/{uid}" ?? "";
-                        await wechatPush.SendAsync(uids, topicIds, summary, content, url, logger);
+                        await wechatPush.SendAsync(uids, topicIds, summary, iLiveInfo.messageBody, iLiveInfo.liveUrl, logger);
                     }
                     else
                     {

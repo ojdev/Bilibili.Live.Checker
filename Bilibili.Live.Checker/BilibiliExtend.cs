@@ -1,4 +1,6 @@
-﻿
+﻿using System.Reflection.Emit;
+using System.Xml.Linq;
+
 public static class BilibiliExtend
 {
     /// <summary>
@@ -7,11 +9,12 @@ public static class BilibiliExtend
     /// <param name="client"></param>
     /// <param name="UID"></param>
     /// <returns></returns>
+    [Obsolete("已过期", error: true)]
     public static async Task<string> GetSpaceLiveRoom(this HttpClient client, string UID)
     {
 
         var web = new HtmlWeb();
-        var doc = web.Load("https://space.bilibili.com/{UID}/");
+        var doc = web.Load($"https://space.bilibili.com/{UID}/");
         ////*[@id="h-name"]
         var title = doc.DocumentNode.InnerText;
         return title?.Substring(0, title.IndexOf("的个人空间")) ?? string.Empty;
