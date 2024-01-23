@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-
-public static class SeleniumExtend
+﻿public static class SeleniumExtend
 {
     /// <summary>
     /// 获取直播间信息
@@ -16,7 +14,7 @@ public static class SeleniumExtend
         chromeOptions.AddArgument("--no-sandbox");
         using var driver = new ChromeDriver(chromeOptions);
         driver.Navigate().GoToUrl(url);
-        WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
+        var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
         IWebElement element = wait.Until(ExpectedConditions.ElementToBeClickable(By.ClassName("i-live")));
         string html = driver.PageSource;
         driver.Quit();

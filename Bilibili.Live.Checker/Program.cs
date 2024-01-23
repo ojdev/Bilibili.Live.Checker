@@ -123,7 +123,7 @@ while (await timer.WaitForNextTickAsync())
             var item = (FollowInfo?)cache.Get($"{uid}");
             if (item == null) continue;
             cache.Remove($"{uid}");
-            var liveroom = await client.GetLiveRoom(uid);
+            var liveroom = await client.GetLiveRoom(uid, logger);
             item.Status = (liveroom?.Data?.LiveStatus ?? 0) == 1;
             if (item.IsNotify)
             {
@@ -133,7 +133,7 @@ while (await timer.WaitForNextTickAsync())
                     var topicIds = new string[] { user.TopicId };
                     var summary = "";
                     //通知
-                    var iLiveInfo = client.GetBilibiliLiveInfo($"{uid}");
+                    var iLiveInfo = client.GetBilibiliLiveInfo($"{liveroom?.Data?.UID}");
                     if (!string.IsNullOrWhiteSpace(iLiveInfo.messageBody))
                     {
                         await wechatPush.SendAsync(uids, topicIds, summary, iLiveInfo.messageBody, iLiveInfo.liveUrl, logger);

@@ -23,9 +23,18 @@ public static class BilibiliExtend
     /// <param name="client"></param>
     /// <param name="roomid"></param>
     /// <returns></returns>
-    public static async Task<BilibiliResponse<BiliBiliLiveRoomInfo>> GetLiveRoom(this HttpClient client, long roomid)
+    public static async Task<BilibiliResponse<BiliBiliLiveRoomInfo>> GetLiveRoom(this HttpClient client, long roomid, ILogger _logger = null)
     {
-        var json = await client.GetStringAsync($"https://api.live.bilibili.com/room/v1/Room/room_init?id={roomid}");
-        return JsonSerializer.Deserialize<BilibiliResponse<BiliBiliLiveRoomInfo>>(json);
+
+        try
+        {
+            var json = await client.GetStringAsync($"https://api.live.bilibili.com/room/v1/Room/room_init?id={roomid}");
+            return JsonSerializer.Deserialize<BilibiliResponse<BiliBiliLiveRoomInfo>>(json);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+            return default;
+        }
     }
 }
