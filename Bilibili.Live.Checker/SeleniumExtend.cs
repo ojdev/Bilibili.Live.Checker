@@ -12,7 +12,7 @@
         var chromeOptions = new ChromeOptions();
         chromeOptions.AddArgument("--headless");
         chromeOptions.AddArgument("--no-sandbox");
-        chromeOptions.AddArgument("--remote-allow-origins=*");
+        chromeOptions.AddArgument("--allowed-ips 0.0.0.0");
         using var driver = new ChromeDriver(chromeOptions);
         driver.Navigate().GoToUrl(url);
         var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
