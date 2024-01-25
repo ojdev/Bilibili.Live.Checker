@@ -12,8 +12,8 @@ RUN echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/so
 RUN apt-get update && apt-get install -y google-chrome-stable
 #RUN wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
 RUN wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/121.0.6167.85/win64/chrome-headless-shell-win64.zip
-RUN unzip chromedriver_linux64.zip -d /usr/local/bin
-RUN rm chromedriver_linux64.zip
+RUN unzip chrome-headless-shell-win64.zip -d /usr/local/bin
+RUN rm chrome-headless-shell-win64.zip
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
