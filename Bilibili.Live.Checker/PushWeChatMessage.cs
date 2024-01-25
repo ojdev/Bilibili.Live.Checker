@@ -23,7 +23,8 @@ public class PushWeChatMessage
     public async Task SendAsync(string[] uids, string[] topicIds, string summary, string content, string url = "", ILogger _logger = null)
     {
         using HttpClient send = new();
-        _logger?.LogInformation($"推送信息给UID{string.Join('、', uids)}，TopicId{string.Join(',', topicIds)}");
+        _logger?.LogInformation($"推送信息给UID\t{string.Join('、', uids)}，TopicId{string.Join(',', topicIds)}");
+        _logger?.LogInformation($"推送内容：{content}");
         var sendRequest = new HttpRequestMessage
         {
             Method = HttpMethod.Post,

@@ -12,6 +12,7 @@
         var chromeOptions = new ChromeOptions();
         chromeOptions.AddArgument("--headless");
         chromeOptions.AddArgument("--no-sandbox");
+        chromeOptions.AddArgument("--disable-dev-shm-usage");
         chromeOptions.AddArgument("--allowed-ips 0.0.0.0");
         using var driver = new ChromeDriver(chromeOptions);
         driver.Navigate().GoToUrl(url);
